@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -28,6 +29,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,11 +46,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.example.flashlight.ui.components.MiniBatteryUiIndicator
 import com.example.flashlight.ui.theme.FlashlightTheme
 import com.example.flashlight.utils.FlashLightManager
+import com.example.flashlight.utils.Toaster
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -60,19 +67,33 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             FlashlightTheme {
-                FlashLightScreen()
+                val context = LocalContext.current // local context
+                // camera flashlight feature support state
+                val isCameraFlashLightSupported = remember {
+                    context.packageManager.hasSystemFeature(
+                        android.content.pm.PackageManager.FEATURE_CAMERA_FLASH
+                    )
+                }
+
+                // show ui
+                if (isCameraFlashLightSupported) FlashLightScreen(context = context)
+                else CameraFlashLightIsNotSupportedScreen()
             }
         }
     }
 }
 
-/**Creates a main app screen.*/
+/**
+ * Creates a main app screen.
+ * @param context local context.
+ */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun FlashLightScreen() {
-    val context = LocalContext.current // context
+fun FlashLightScreen(context: Context) {
     val haptic = LocalHapticFeedback.current // haptic feedback
 
+    // android toast utility
+    val toaster = remember { Toaster(context) }
     // camera permission launcher
     val cameraPermission = rememberPermissionState(
         permission = Manifest.permission.CAMERA
@@ -187,6 +208,7 @@ fun FlashLightScreen() {
                             if (flashLight)
                                 // update flashlight state
                                 isFlashLightOn = !isFlashLightOn
+                            else toaster.showToast("flash not respond!")
                         }
                     },
                     modifier = Modifier
@@ -212,7 +234,7 @@ fun FlashLightScreen() {
                     flashLightManager?.let { manager ->
                         val flashLight = manager.toggleFlashLight(false)
                         if (flashLight)
-                        // update flashlight state
+                            // update flashlight state
                             isFlashLightOn = false
                     }
 
@@ -224,14 +246,13 @@ fun FlashLightScreen() {
                         .border(
                             width = 2.dp,
                             shape = RoundedCornerShape(10.dp),
-                            color = Color(0xFFC92020)
+                            color = Color(0xFFFF5722)
                         )
+                        .padding(10.dp)
                 ) {
                     Text(
-                        text = "Low battery! Please, charge.",
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .fillMaxSize(),
+                        text = "Low battery! Please, charge.🪫",
+                        modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
@@ -247,32 +268,56 @@ fun FlashLightScreen() {
                         shape = RoundedCornerShape(10.dp),
                         color = Color(0xFFC92020)
                     )
+                    .padding(10.dp)
             ) {
                 // message to show
                 val messageToShow =
                     if (cameraPermission.status.shouldShowRationale)
-                        "App requires access to the camera to work, " +
-                                "as it controls the phone's flashlight, which is part of the camera. " +
-                                "Please, request this permission via request button or app settings buttons."
+                        buildAnnotatedString {
+                            append("App requires access to the ")
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append("camera")
+                            }
+                            append(
+                                " to work, as it controls the phone's flashlight, " +
+                                        "which is part of the camera. Please, request this permission via "
+                            )
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append("request button")
+                            }
+                            append(" or ")
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append("app settings button")
+                            }
+                            append('.')
+                        }
                     else
-                        "Camera permission is not granted! " +
-                                "Please, request this permission via request button or app settings buttons."
+                        buildAnnotatedString {
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append("Camera permission")
+                            }
+                            append(" is not granted! ")
+                            append("Please, request this permission via ")
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append("request button")
+                            }
+                            append(" or ")
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append("app settings button")
+                            }
+                            append('.')
+                        }
 
                 // message view
                 Text(
                     text = messageToShow,
                     modifier = Modifier
                         .weight(1f)
-                        .fillMaxWidth()
-                        .padding(
-                            top = 10.dp,
-                            start = 5.dp,
-                            end = 5.dp
-                        ),
+                        .fillMaxWidth(),
                     color = MaterialTheme.colorScheme.onPrimary
                 )
 
-                Row(modifier = Modifier.padding(horizontal = 10.dp)) {
+                Row {
                     // go to app settings button
                     Button(
                         onClick = {
@@ -303,6 +348,49 @@ fun FlashLightScreen() {
                     ) { Text(text = "request") }
                 }
             }
+        }
+    }
+}
+
+/**Creates screen which displays message about camera flash is not supported.*/
+@Composable
+fun CameraFlashLightIsNotSupportedScreen() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier
+                .size(300.dp)
+                .border(
+                    width = 2.dp,
+                    shape = RoundedCornerShape(10.dp),
+                    color = Color(0xFFFF0000)
+                )
+                .padding(10.dp)
+        ) {
+            // icon
+            Icon(
+                painter = painterResource(R.drawable.outline_flashlight_off_24),
+                contentDescription = null,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .size(150.dp)
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // text message
+            Text(
+                modifier = Modifier.weight(1f),
+                text = buildAnnotatedString {
+                    append("Oops, it looks like your device doesn't have or doesn't support ")
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("camera flash")
+                    }
+                    append('.')
+                }
+            )
         }
     }
 }

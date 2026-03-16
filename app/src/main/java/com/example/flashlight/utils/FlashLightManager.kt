@@ -4,7 +4,7 @@ import android.content.Context
 import android.hardware.camera2.CameraManager
 import java.lang.Exception
 
-class FlashLightManager(private val context: Context) {
+class FlashLightManager(context: Context) {
     // get camera system service
     val cameraService = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     var cameraId: String? = null
