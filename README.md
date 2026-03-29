@@ -1,4 +1,4 @@
-# Simple Flashlight
+<h1 align="center">Simple Flashlight</h1>
 
 ![Compose BOM](https://img.shields.io/badge/Compose%20Bom-2026.03.00-blue)
 ![Kotlin](https://img.shields.io/badge/Kotlin-2.0.21-purple)
@@ -12,9 +12,6 @@ Simple android flashlight app on jetpack compose📱🔦.
     <tr>
         <td>
             <img src="previews/screen1.jpg">
-        </td>
-        <td>
-            <img src="previews/screen2.jpg">
         </td>
         <td>
             <img src="previews/screen3.jpg">
