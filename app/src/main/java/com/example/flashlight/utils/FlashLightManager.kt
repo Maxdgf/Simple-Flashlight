@@ -7,7 +7,7 @@ import java.lang.Exception
 class FlashLightManager(context: Context) {
     // get camera system service
     val cameraService = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
-    var cameraId: String? = null
+    private var cameraId: String? = null
 
     init {
         cameraId = cameraService.getBackCameraId()

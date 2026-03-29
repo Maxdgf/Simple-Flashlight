@@ -52,6 +52,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.flashlight.ui.components.MiniBatteryUiIndicator
 import com.example.flashlight.ui.theme.FlashlightTheme
 import com.example.flashlight.utils.FlashLightManager
@@ -92,7 +93,7 @@ class MainActivity : ComponentActivity() {
 fun FlashLightScreen(context: Context) {
     val haptic = LocalHapticFeedback.current // haptic feedback
 
-    // android toast utility
+    // toast util
     val toaster = remember { Toaster(context) }
     // camera permission launcher
     val cameraPermission = rememberPermissionState(
@@ -116,7 +117,7 @@ fun FlashLightScreen(context: Context) {
     DisposableEffect(flashLightManager) {
         // check flashlight manager
         if (flashLightManager == null)
-            return@DisposableEffect onDispose { } // return onDispose
+            return@DisposableEffect onDispose { } // return empty onDispose
 
         // create torch callback
         val torchCallback = object : CameraManager.TorchCallback() {
@@ -206,14 +207,14 @@ fun FlashLightScreen(context: Context) {
 
                             val flashLight = manager.toggleFlashLight(!isFlashLightOn)
                             if (flashLight)
-                                // update flashlight state
+                            // update flashlight state
                                 isFlashLightOn = !isFlashLightOn
                             else toaster.showToast("flash not respond!")
                         }
                     },
                     modifier = Modifier
-                        .align(Alignment.Center)
-                        .size(100.dp),
+                        .size(120.dp)
+                        .align(Alignment.Center),
                     shape = CircleShape,
                     colors = ButtonDefaults.buttonColors(
                         contentColor = Color.White,
@@ -225,7 +226,8 @@ fun FlashLightScreen(context: Context) {
                     Text(
                         text = if (!isFlashLightOn) "ON" else "OFF",
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = Color.White,
+                        fontSize = 30.sp
                     )
                 }
             } else {
@@ -239,7 +241,7 @@ fun FlashLightScreen(context: Context) {
                     }
 
                 // low battery level message
-                Column(
+                Box(
                     modifier = Modifier
                         .align(Alignment.Center)
                         .size(300.dp)
@@ -248,11 +250,11 @@ fun FlashLightScreen(context: Context) {
                             shape = RoundedCornerShape(10.dp),
                             color = Color(0xFFFF5722)
                         )
-                        .padding(10.dp)
+                        .padding(10.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "Low battery! Please, charge.🪫",
-                        modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
@@ -384,7 +386,7 @@ fun CameraFlashLightIsNotSupportedScreen() {
             Text(
                 modifier = Modifier.weight(1f),
                 text = buildAnnotatedString {
-                    append("Oops, it looks like your device doesn't have or doesn't support ")
+                    append("☹️Oops, it looks like your device doesn't have or doesn't support ")
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                         append("camera flash")
                     }
