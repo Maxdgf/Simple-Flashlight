@@ -19,6 +19,9 @@ Simple android flashlight app on jetpack compose📱🔦.
         <td>
             <img src="previews/screen4.jpg">
         </td>
+        <td>
+            <img src="previews/screen5.jpg">
+        </td>
     </tr>
 </table>
 
