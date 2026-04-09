@@ -15,6 +15,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,6 +43,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.dropShadow
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
@@ -198,37 +203,52 @@ fun FlashLightScreen(context: Context) {
         if (cameraPermission.status.isGranted) {
             // check battery level
             if (!isBatteryLevelLow) {
-                // turn on/off flashlight button
-                Button(
-                    onClick = {
-                        flashLightManager?.let { manager ->
-                            // perform haptic
-                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-
-                            val flashLight = manager.toggleFlashLight(!isFlashLightOn)
-                            if (flashLight)
-                            // update flashlight state
-                                isFlashLightOn = !isFlashLightOn
-                            else toaster.showToast("flash not respond!")
-                        }
-                    },
+                // radial white gradient(light effect)
+                Box(
                     modifier = Modifier
-                        .size(120.dp)
-                        .align(Alignment.Center),
-                    shape = CircleShape,
-                    colors = ButtonDefaults.buttonColors(
-                        contentColor = Color.White,
-                        containerColor =
-                            if (!isFlashLightOn) Color(0xFF4CAF50) // enabled
-                            else Color(0xFFC92020) // disabled
-                    )
+                        .size(300.dp)
+                        .align(Alignment.Center)
+                        .background(
+                            brush = Brush.radialGradient(
+                                colors =
+                                    if (isSystemInDarkTheme() && isFlashLightOn) listOf(Color.White, Color.Unspecified)
+                                    else listOf(Color.Unspecified, Color.Unspecified)
+                            ),
+                            shape = CircleShape
+                        )
                 ) {
-                    Text(
-                        text = if (!isFlashLightOn) "ON" else "OFF",
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        fontSize = 30.sp
-                    )
+                    // turn on/off flashlight button
+                    Button(
+                        onClick = {
+                            flashLightManager?.let { manager ->
+                                // perform haptic
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+
+                                val flashLight = manager.toggleFlashLight(!isFlashLightOn)
+                                if (flashLight)
+                                // update flashlight state
+                                    isFlashLightOn = !isFlashLightOn
+                                else toaster.showToast("flash not respond!")
+                            }
+                        },
+                        modifier = Modifier
+                            .size(120.dp)
+                            .align(Alignment.Center),
+                        shape = CircleShape,
+                        colors = ButtonDefaults.buttonColors(
+                            contentColor = Color.White,
+                            containerColor =
+                                if (!isFlashLightOn) Color(0xFF4CAF50) // enabled
+                                else Color(0xFFC92020) // disabled
+                        )
+                    ) {
+                        Text(
+                            text = if (!isFlashLightOn) "ON" else "OFF",
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            fontSize = 30.sp
+                        )
+                    }
                 }
             } else {
                 // turn off phone flashlight if low battery
