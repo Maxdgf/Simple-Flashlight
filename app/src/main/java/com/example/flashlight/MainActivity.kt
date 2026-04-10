@@ -43,9 +43,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.dropShadow
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -58,14 +55,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.flashlight.ui.components.MiniBatteryUiIndicator
-import com.example.flashlight.ui.theme.FlashlightTheme
-import com.example.flashlight.utils.FlashLightManager
-import com.example.flashlight.utils.Toaster
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
+
+import com.example.flashlight.ui.components.MiniBatteryUiIndicator
+import com.example.flashlight.ui.theme.FlashlightTheme
+import com.example.flashlight.utils.FlashLightManager
+import com.example.flashlight.utils.Toaster
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -224,8 +222,8 @@ fun FlashLightScreen(context: Context) {
                                 // perform haptic
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
 
-                                val flashLight = manager.toggleFlashLight(!isFlashLightOn)
-                                if (flashLight)
+                                val flashLightSuccess = manager.toggleFlashLight(!isFlashLightOn)
+                                if (flashLightSuccess)
                                 // update flashlight state
                                     isFlashLightOn = !isFlashLightOn
                                 else toaster.showToast("flash not respond!")
