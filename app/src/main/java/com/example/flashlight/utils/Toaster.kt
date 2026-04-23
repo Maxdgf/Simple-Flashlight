@@ -15,7 +15,9 @@ class Toaster(private val context: Context) {
         isLong: Boolean = false
     ) {
         // show toast message (long or short by time)
-        if (isLong) Toast.makeText(context, message, Toast.LENGTH_LONG).show() // long
-        else Toast.makeText(context, message, Toast.LENGTH_SHORT).show() // short
+        if (isLong)
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show() // long
+        else
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show() // short
     }
 }

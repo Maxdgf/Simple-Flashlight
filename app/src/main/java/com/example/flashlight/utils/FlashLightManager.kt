@@ -10,7 +10,7 @@ class FlashLightManager(context: Context) {
     private var cameraId: String? = null
 
     init {
-        cameraId = cameraService.getBackCameraId()
+        cameraId = cameraService.getBackCameraId() // get back camera id
     }
 
     /**
@@ -46,6 +46,18 @@ class FlashLightManager(context: Context) {
         }
 
     /**
+     * Returns phone back camera id.
+     * @return nullable string.
+     */
+    private fun CameraManager.getBackCameraId(): String? =
+        try {
+            cameraIdList[0] // get back camera id from id list
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+
+    /**
      * Toggles torch mode by state.
      * @param state torch state.
      * @return boolean success state.
@@ -59,17 +71,5 @@ class FlashLightManager(context: Context) {
         } catch (e: Exception) {
             e.printStackTrace()
             false
-        }
-
-    /**
-     * Returns phone back camera id.
-     * @return nullable string.
-     */
-    private fun CameraManager.getBackCameraId(): String? =
-        try {
-            cameraIdList[0]
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
         }
 }

@@ -35,10 +35,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -72,6 +72,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             FlashlightTheme {
                 val context = LocalContext.current // local context
+
                 // camera flashlight feature support state
                 val isCameraFlashLightSupported = remember {
                     context.packageManager.hasSystemFeature(
@@ -98,17 +99,22 @@ fun FlashLightScreen(context: Context) {
 
     // toast util
     val toaster = remember { Toaster(context) }
+
     // camera permission launcher
     val cameraPermission = rememberPermissionState(
         permission = Manifest.permission.CAMERA
-    )
+    ) { isGranted ->
+        // show permission status message
+        if (isGranted)
+            toaster.showToast("Camera permission granted!")
+        else
+            toaster.showToast("Camera permission not granted.")
+    }
 
-    // battery level percent
-    var batteryLevel by remember { mutableIntStateOf(0) }
-    // low battery level flag
-    var isBatteryLevelLow by rememberSaveable { mutableStateOf(false) }
-    // flashlight state
-    var isFlashLightOn by rememberSaveable { mutableStateOf(false) }
+    var batteryLevel by remember { mutableIntStateOf(0) } // battery level percent
+    var isBatteryLevelLow by rememberSaveable { mutableStateOf(false) } // low battery level flag
+    var isFlashLightOn by rememberSaveable { mutableStateOf(false) } // flashlight state
+
     // flashlight manager
     val flashLightManager: FlashLightManager? = remember(cameraPermission.status.isGranted) {
         // check camera permission
@@ -129,7 +135,8 @@ fun FlashLightScreen(context: Context) {
                 isFlashLightOn = enabled // update flashlight state
             }
         }
-        val cameraManager = flashLightManager.cameraService // get camera manager from flash light utility
+        val cameraManager =
+            flashLightManager.cameraService // get camera manager from flash light utility
 
         // register torch callback
         cameraManager.registerTorchCallback(torchCallback, null)
@@ -178,18 +185,20 @@ fun FlashLightScreen(context: Context) {
         }
     }
 
+    // app base UI
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.primary)
     ) {
+        // battery level view
         Row(
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .padding(top = 40.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            MiniBatteryUiIndicator(percent = batteryLevel)
+            MiniBatteryUiIndicator(percent = batteryLevel) // battery level indicator
             Spacer(modifier = Modifier.width(10.dp))
             Text(
                 text = "$batteryLevel%",
@@ -209,7 +218,10 @@ fun FlashLightScreen(context: Context) {
                         .background(
                             brush = Brush.radialGradient(
                                 colors =
-                                    if (isSystemInDarkTheme() && isFlashLightOn) listOf(Color.White, Color.Unspecified)
+                                    if (isSystemInDarkTheme() && isFlashLightOn) listOf(
+                                        Color.White,
+                                        Color.Unspecified
+                                    )
                                     else listOf(Color.Unspecified, Color.Unspecified)
                             ),
                             shape = CircleShape
@@ -254,8 +266,7 @@ fun FlashLightScreen(context: Context) {
                     flashLightManager?.let { manager ->
                         val flashLight = manager.toggleFlashLight(false)
                         if (flashLight)
-                            // update flashlight state
-                            isFlashLightOn = false
+                            isFlashLightOn = false // update flashlight state
                     }
 
                 // low battery level message
