@@ -25,12 +25,12 @@ Simple android flashlight app on jetpack compose📱🔦.
     </tr>
 </table>
 
-## Android versions🔃
-Android 8.0 and later.
+## Permissions⚙️
+App requires access to the **camera**, to manage camera flash.
 
 ## Tech stack📚
-* Jetpack Compose
-* Accompanist
+* **Jetpack Compose** - UI
+* **Accompanist** - permissions management
 
 ## Features🌟
 * runtime permission check✅
@@ -40,3 +40,6 @@ Android 8.0 and later.
 
 ## How it works?📃
 When launched, the application checks for flashlight support on the phone's camera, then if it is present (otherwise, a screen is displayed informing that it is not supported), it grants camera permission using the **Accompanist** library. Then, if permission is granted, a **torch callback** (to synchronize the flashlight's state if the flashlight was turned on externally) and a **battery charge broadcast receiver** (which monitors the battery level) are registered. Afterward, the user can turn the flashlight on and off. When the battery level is low (approximately **5%** or less), flashlight will turn off and the app will notify the user.
+
+## Android versions🔃
+Android 8.0 and later.
