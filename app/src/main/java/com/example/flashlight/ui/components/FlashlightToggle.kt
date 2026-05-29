@@ -3,6 +3,7 @@ package com.example.flashlight.ui.components
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -30,16 +32,22 @@ fun FlashlightUiToggle(
                 color = Color(0x260E0E0E),
                 shape = CircleShape
             )
+            .clip(shape = CircleShape)
+            .border(
+                width = 5.dp,
+                color = Color(0xFF333333),
+                shape = CircleShape
+            )
             .clickable(onClick = { onToggle() })
             .size(
-                width = 125.dp,
-                height = 250.dp
+                width = 135.dp,
+                height = 260.dp
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val animatedWeight1 by animateFloatAsState(
             if (!isFlashLightOn) 1f
-            else 0.01f
+            else 0.05f
         )
         Spacer(modifier = Modifier.weight(animatedWeight1))
 
@@ -65,7 +73,7 @@ fun FlashlightUiToggle(
         }
 
         val animatedWeight2 by animateFloatAsState(
-            if (!isFlashLightOn) 0.01f
+            if (!isFlashLightOn) 0.05f
             else 1f
         )
         Spacer(modifier = Modifier.weight(animatedWeight2))

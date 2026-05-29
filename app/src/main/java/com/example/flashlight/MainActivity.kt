@@ -185,7 +185,7 @@ fun FlashLightScreen(context: Context) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color(0xFF252323))
+            .background(color = Color(0xFF2F2F2F))
     ) {
         // battery level view
         Row(
