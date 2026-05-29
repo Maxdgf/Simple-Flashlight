@@ -13,6 +13,7 @@ import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -209,19 +210,24 @@ fun FlashLightScreen(context: Context) {
         if (cameraPermission.status.isGranted) {
             // check battery level
             if (!isBatteryLevelLow) {
+                // animated radial gradient size
+                val gradientSize by animateDpAsState(
+                    if (isSystemInDarkTheme() && isFlashLightOn) 300.dp
+                    else 120.dp
+                )
+
                 // radial white gradient(light effect)
                 Box(
                     modifier = Modifier
-                        .size(300.dp)
+                        .size(gradientSize)
                         .align(Alignment.Center)
                         .background(
                             brush = Brush.radialGradient(
                                 colors =
-                                    if (isSystemInDarkTheme() && isFlashLightOn) listOf(
+                                    listOf(
                                         Color.White,
                                         Color.Unspecified
                                     )
-                                    else listOf(Color.Unspecified, Color.Unspecified)
                             ),
                             shape = CircleShape
                         )
