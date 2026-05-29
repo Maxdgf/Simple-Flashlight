@@ -80,9 +80,11 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
-                // show ui
-                if (isCameraFlashLightSupported) FlashLightScreen(context = context)
-                else CameraFlashLightIsNotSupportedScreen()
+                // show UI
+                if (isCameraFlashLightSupported)
+                    FlashLightScreen(context = context)
+                else
+                    CameraFlashLightIsNotSupportedScreen()
             }
         }
     }
@@ -97,7 +99,7 @@ class MainActivity : ComponentActivity() {
 fun FlashLightScreen(context: Context) {
     val haptic = LocalHapticFeedback.current // haptic feedback
 
-    // toast util
+    // toast utility
     val toaster = remember { Toaster(context) }
 
     // camera permission launcher
@@ -111,9 +113,9 @@ fun FlashLightScreen(context: Context) {
             toaster.showToast("Camera permission not granted.")
     }
 
-    var batteryLevel by remember { mutableIntStateOf(0) } // battery level percent
+    var batteryLevel by remember { mutableIntStateOf(0) }               // battery level percent
     var isBatteryLevelLow by rememberSaveable { mutableStateOf(false) } // low battery level flag
-    var isFlashLightOn by rememberSaveable { mutableStateOf(false) } // flashlight state
+    var isFlashLightOn by rememberSaveable { mutableStateOf(false) }    // flashlight state
 
     // flashlight manager
     val flashLightManager: FlashLightManager? = remember(cameraPermission.status.isGranted) {
@@ -122,7 +124,7 @@ fun FlashLightScreen(context: Context) {
         else null
     }
 
-    // torch synchronization
+    // flashlight synchronization(torch callback)
     DisposableEffect(flashLightManager) {
         // check flashlight manager
         if (flashLightManager == null)
@@ -135,26 +137,23 @@ fun FlashLightScreen(context: Context) {
                 isFlashLightOn = enabled // update flashlight state
             }
         }
-        val cameraManager =
-            flashLightManager.cameraService // get camera manager from flash light utility
+        val cameraManager = flashLightManager.cameraService // camera manager from flashlight utility
 
-        // register torch callback
-        cameraManager.registerTorchCallback(torchCallback, null)
+        cameraManager.registerTorchCallback(torchCallback, null) // register torch callback
 
         onDispose {
-            // unregister torch callback
-            cameraManager.unregisterTorchCallback(torchCallback)
+            cameraManager.unregisterTorchCallback(torchCallback) // unregister torch callback
         }
     }
 
     // battery level receiver
     DisposableEffect(Unit) {
-        // init battery level receiver
+        // create battery level receiver
         val batteryLevelReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 val level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) // get battery level
                 val scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1) // get battery scale
-                val levelPercent = (level * 100 / scale.toFloat()).toInt() // convert to percent
+                val levelPercent = (level * 100 / scale.toFloat()).toInt()                         // convert to percent
 
                 // update states
                 // 5 - low battery percent
@@ -171,7 +170,7 @@ fun FlashLightScreen(context: Context) {
         context.registerReceiver(null, intentFilter)?.let { intent ->
             val level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) // get battery level
             val scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1) // get battery scale
-            val levelPercent = (level * 100 / scale.toFloat()).toInt() // convert to percent
+            val levelPercent = (level * 100 / scale.toFloat()).toInt()                         // convert to percent
 
             // update states
             // 5 - low battery percent
@@ -185,7 +184,7 @@ fun FlashLightScreen(context: Context) {
         }
     }
 
-    // app base UI
+    // base UI
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -231,14 +230,14 @@ fun FlashLightScreen(context: Context) {
                     Button(
                         onClick = {
                             flashLightManager?.let { manager ->
-                                // perform haptic
-                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress) // perform haptic
 
                                 val flashLightSuccess = manager.toggleFlashLight(!isFlashLightOn)
+
                                 if (flashLightSuccess)
-                                // update flashlight state
-                                    isFlashLightOn = !isFlashLightOn
-                                else toaster.showToast("flash not respond!")
+                                    isFlashLightOn = !isFlashLightOn // update flashlight state
+                                else
+                                    toaster.showToast("Flash not respond!")
                             }
                         },
                         modifier = Modifier
@@ -249,11 +248,11 @@ fun FlashLightScreen(context: Context) {
                             contentColor = Color.White,
                             containerColor =
                                 if (!isFlashLightOn) Color(0xFF4CAF50) // enabled
-                                else Color(0xFFC92020) // disabled
+                                else Color(0xFFC92020)                 // disabled
                         )
                     ) {
                         Text(
-                            text = if (!isFlashLightOn) "ON" else "OFF",
+                            text = if (!isFlashLightOn) "ON" else "OFF", // ON/OFF caption
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
                             fontSize = 30.sp
@@ -262,12 +261,13 @@ fun FlashLightScreen(context: Context) {
                 }
             } else {
                 // turn off phone flashlight if low battery
-                if (isFlashLightOn)
+                if (isFlashLightOn) {
                     flashLightManager?.let { manager ->
                         val flashLight = manager.toggleFlashLight(false)
                         if (flashLight)
                             isFlashLightOn = false // update flashlight state
                     }
+                }
 
                 // low battery level message
                 Box(
@@ -303,7 +303,7 @@ fun FlashLightScreen(context: Context) {
             ) {
                 // message to show
                 val messageToShow =
-                    if (cameraPermission.status.shouldShowRationale)
+                    if (cameraPermission.status.shouldShowRationale) {
                         buildAnnotatedString {
                             append("App requires access to the ")
                             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
@@ -322,7 +322,7 @@ fun FlashLightScreen(context: Context) {
                             }
                             append('.')
                         }
-                    else
+                    } else {
                         buildAnnotatedString {
                             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                                 append("Camera permission")
@@ -338,6 +338,7 @@ fun FlashLightScreen(context: Context) {
                             }
                             append('.')
                         }
+                    }
 
                 // message view
                 Text(

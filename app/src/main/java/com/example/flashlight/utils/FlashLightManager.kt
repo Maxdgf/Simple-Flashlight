@@ -10,7 +10,7 @@ class FlashLightManager(context: Context) {
     private var cameraId: String? = null
 
     init {
-        cameraId = cameraService.getBackCameraId() // get back camera id
+        cameraId = cameraService.getBackCameraId() // back camera id
     }
 
     /**
@@ -65,7 +65,7 @@ class FlashLightManager(context: Context) {
     fun toggleFlashLight(state: Boolean): Boolean =
         try {
             when (state) {
-                true -> turnOn() // turn on torch
+                true -> turnOn()   // turn on torch
                 false -> turnOff() // turn off torch
             }
         } catch (e: Exception) {
