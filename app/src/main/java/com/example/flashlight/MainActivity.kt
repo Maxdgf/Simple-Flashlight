@@ -56,6 +56,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.flashlight.ui.components.FlashlightUiToggle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -189,7 +190,7 @@ fun FlashLightScreen(context: Context) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = MaterialTheme.colorScheme.primary)
+            .background(color = Color(0xFF252323))
     ) {
         // battery level view
         Row(
@@ -210,31 +211,10 @@ fun FlashLightScreen(context: Context) {
         if (cameraPermission.status.isGranted) {
             // check battery level
             if (!isBatteryLevelLow) {
-                // animated radial gradient size
-                val gradientSize by animateDpAsState(
-                    if (isSystemInDarkTheme() && isFlashLightOn) 300.dp
-                    else 120.dp
-                )
-
-                // radial white gradient(light effect)
-                Box(
-                    modifier = Modifier
-                        .size(gradientSize)
-                        .align(Alignment.Center)
-                        .background(
-                            brush = Brush.radialGradient(
-                                colors =
-                                    listOf(
-                                        Color.White,
-                                        Color.Unspecified
-                                    )
-                            ),
-                            shape = CircleShape
-                        )
-                ) {
-                    // turn on/off flashlight button
-                    Button(
-                        onClick = {
+                Box(modifier = Modifier.align(Alignment.Center)) {
+                    FlashlightUiToggle(
+                        isFlashLightOn = isFlashLightOn,
+                        onToggle = {
                             flashLightManager?.let { manager ->
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress) // perform haptic
 
@@ -245,25 +225,8 @@ fun FlashLightScreen(context: Context) {
                                 else
                                     toaster.showToast("Flash not respond!")
                             }
-                        },
-                        modifier = Modifier
-                            .size(120.dp)
-                            .align(Alignment.Center),
-                        shape = CircleShape,
-                        colors = ButtonDefaults.buttonColors(
-                            contentColor = Color.White,
-                            containerColor =
-                                if (!isFlashLightOn) Color(0xFF4CAF50) // enabled
-                                else Color(0xFFC92020)                 // disabled
-                        )
-                    ) {
-                        Text(
-                            text = if (!isFlashLightOn) "ON" else "OFF", // ON/OFF caption
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            fontSize = 30.sp
-                        )
-                    }
+                        }
+                    )
                 }
             } else {
                 // turn off phone flashlight if low battery
