@@ -41,6 +41,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
@@ -185,7 +186,7 @@ fun FlashLightScreen(context: Context) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color(0xFF2F2F2F))
+            .background(color = Color(0xFF282828))
     ) {
         // battery level view
         Row(

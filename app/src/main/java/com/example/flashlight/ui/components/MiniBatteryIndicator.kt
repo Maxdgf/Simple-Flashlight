@@ -21,6 +21,7 @@ private const val HEIGHT = 20 // indicator height
 
 /**
  * Creates a mini ui battery level indicator.
+ *
  * @param percent current percent.
  * @param lowLevel low battery mark.
  */
@@ -32,7 +33,7 @@ fun MiniBatteryUiIndicator(
     // battery indicator color
     val color =
         if (percent <= lowLevel) Color.Red
-        else MaterialTheme.colorScheme.onPrimary
+        else Color.White
 
     // battery indicator
     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -57,10 +58,7 @@ fun MiniBatteryUiIndicator(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(barWidth)
-                    .background(
-                        color = color,
-                        shape = RoundedCornerShape(2.dp)
-                    )
+                    .background(color = color)
             )
         }
 

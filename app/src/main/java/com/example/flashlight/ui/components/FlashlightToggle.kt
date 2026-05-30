@@ -21,6 +21,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/**
+ * Creates a styled vertical flashlight toggle.
+ *
+ * @param isFlashLightOn flashlight state.
+ * @param onToggle flashlight toggle function.
+ */
 @Composable
 fun FlashlightUiToggle(
     isFlashLightOn: Boolean,
@@ -29,7 +35,7 @@ fun FlashlightUiToggle(
     Column(
         modifier = Modifier
             .background(
-                color = Color(0x260E0E0E),
+                color = Color(0xFF252525),
                 shape = CircleShape
             )
             .clip(shape = CircleShape)
