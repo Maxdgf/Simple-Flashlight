@@ -11,16 +11,13 @@ Simple android flashlight app on jetpack compose📱🔦.
 <table>
     <tr>
         <td>
-            <img src="previews/screen1.jpg">
+            <img src="previews/preview1.jpg" alt="app preview 1">
         </td>
         <td>
-            <img src="previews/screen3.jpg">
+            <img src="previews/preview2.jpg" alt="app preview 2">
         </td>
         <td>
-            <img src="previews/screen4.jpg">
-        </td>
-        <td>
-            <img src="previews/screen5.jpg">
+            <img src="previews/preview3.jpg" alt="app preview 3">
         </td>
     </tr>
 </table>
